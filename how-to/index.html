@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to Use Wacky Stream Boards</title>
+<meta name="description" content="Set up big, bright live game boards for your TikTok or Whatnot breaks in about 10 minutes. Gear list, settings, and step by step help.">
+<link rel="icon" href="../images/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#050505; --panel:#111; --line:#2c2c2c; --gold:#f7c948; --gold-2:#ffe27a; --gold-3:#c99a1e; --green:#3ddc84; --red:#e2262b; --muted:#c9c9c9;
+          --head:"Anton",Impact,sans-serif; --body:"Barlow Condensed","Arial Narrow",Arial,sans-serif; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; color:#fff; font:600 20px/1.45 var(--body); background: var(--bg); }
+  a { color: var(--gold); }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 22px 16px 80px; }
+  .top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .brand { font: italic 400 22px/1 var(--head); color:#fff; text-decoration:none; letter-spacing:.06em; }
+  .top nav { display:flex; gap:6px; flex-wrap:wrap; }
+  .top nav a { color:var(--gold); text-decoration:none; font-weight:800; text-transform:uppercase; letter-spacing:.04em; font-size:15px; padding:6px 10px; border:2px solid #2c2c2c; border-radius:8px; }
+  .hero { padding: 34px 0 10px; }
+  h1 { font: italic 400 clamp(46px, 9vw, 92px)/.95 var(--head); margin: 0 0 12px; letter-spacing:.02em;
+       background: linear-gradient(180deg,var(--gold-2),var(--gold) 45%,var(--gold-3)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lead { font-size: 24px; color: var(--muted); margin: 0 0 18px; }
+  .cta { display:flex; gap:10px; flex-wrap:wrap; }
+  .btn { display:inline-block; font: 800 18px var(--body); text-transform:uppercase; letter-spacing:.05em; text-decoration:none; background:#161616; color:var(--gold); border:2px solid var(--gold-3); border-radius:10px; padding:10px 16px; }
+  .btn.primary { background: var(--gold); color:#000; border-color: var(--gold); box-shadow: 0 4px 0 #7a5200; }
+  .toc { background: var(--panel); border:2px solid var(--line); border-radius:14px; padding: 14px 18px; margin: 26px 0; columns: 2 240px; }
+  .toc a { display:block; text-decoration:none; padding: 3px 0; font-weight:800; }
+  h2 { font: italic 400 clamp(34px, 6vw, 52px)/1 var(--head); color: var(--gold); margin: 56px 0 8px; letter-spacing:.02em; scroll-margin-top: 16px; }
+  h2 .num { display:inline-block; background: var(--red); color:#fff; border-radius: 10px; padding: 2px 12px; margin-right: 10px; font-size: .8em; }
+  h3 { font: 800 26px/1.1 var(--body); text-transform: uppercase; letter-spacing:.03em; margin: 26px 0 6px; }
+  p { margin: 8px 0; }
+  .steps { list-style: none; padding: 0; margin: 12px 0; counter-reset: s; }
+  .steps > li { counter-increment: s; position: relative; background: var(--panel); border: 2px solid var(--line); border-radius: 14px; padding: 12px 16px 12px 66px; margin: 10px 0; }
+  .steps > li::before { content: counter(s); position:absolute; left: 14px; top: 10px; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color:#000; font: 400 26px/40px var(--head); text-align:center; }
+  .steps b { color: #fff; }
+  .gear { display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 12px 0; }
+  .item { background: var(--panel); border: 2px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  .item .tag { display:inline-block; font: 800 13px var(--body); letter-spacing:.08em; text-transform:uppercase; padding: 3px 8px; border-radius: 6px; background: var(--red); margin-bottom: 6px; }
+  .item .tag.nice { background: #333; }
+  .item h4 { margin: 0 0 4px; font: 800 22px/1.1 var(--body); }
+  .item p { margin: 0; color: var(--muted); font-size: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; background: var(--panel); border-radius: 12px; overflow: hidden; font-size: 18px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid #222; vertical-align: top; }
+  th { background: #1a1a1a; color: var(--gold); text-transform: uppercase; font-size: 15px; letter-spacing: .06em; }
+  .tablewrap { overflow-x: auto; }
+  .box { border-radius: 14px; padding: 12px 16px; margin: 14px 0; border: 2px solid; }
+  .box.tip { background: #10200f; border-color: #2f6b2c; }
+  .box.warn { background: #2a0d0d; border-color: #7a2323; }
+  .box.gold { background: #231b05; border-color: var(--gold-3); }
+  .box b:first-child { text-transform: uppercase; letter-spacing:.05em; }
+  code { background:#1b1b1b; border:1px solid #333; border-radius:5px; padding:1px 6px; font-size: 17px; }
+  .shot { width: 100%; border-radius: 12px; border: 2px solid var(--line); display:block; margin: 10px 0; }
+  .games { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  details { background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 800; }
+  .dl { display:flex; gap:14px; align-items:center; flex-wrap:wrap; background: var(--gold); color:#000; border-radius: 16px; padding: 16px 18px; margin: 18px 0; }
+  .dl b { font: italic 400 30px/1 var(--head); }
+  .dl .btn { background:#000; color: var(--gold); border-color:#000; margin-left:auto; }
+  footer { margin-top: 60px; color: #888; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="brand" href="https://wackymclovin.com">WACKY MCLOVIN</a>
+    <nav><a href="../">Boards</a><a href="../print/">Print Station</a><a href="../picture/">Picture Link Maker</a><a href="../downloads/">Downloads</a></nav></div>
+
+  <div class="hero">
+    <h1>How to use Wacky Stream Boards</h1>
+    <p class="lead">Big, bright game boards for your live breaks. You type in a Google Sheet. The board on your TV changes by itself. Most people are set up in about 10 minutes.</p>
+    <div class="cta"><a class="btn primary" href="#setup">Start the 10 minute setup</a><a class="btn" href="../downloads/">Get the printable guide</a></div>
+  </div>
+
+  <div class="toc">
+    <a href="#what">1. What this is</a>
+    <a href="#gear">2. What you need</a>
+    <a href="#setup">3. The 10 minute setup</a>
+    <a href="#night">4. Running a game night</a>
+    <a href="#games">5. The games</a>
+    <a href="#pictures">6. Adding prize pictures</a>
+    <a href="#shop">7. Shop orders and labels</a>
+    <a href="#settings">8. Best settings</a>
+    <a href="#rules">9. Play by the rules</a>
+    <a href="#help">10. Fixing problems</a>
+  </div>
+
+  <h2 id="what"><span class="num">1</span>What this is</h2>
+  <p>When you rip packs on a live stream, people want to see who owns which spot. They want to see the chase card. They want to see the hits.</p>
+  <p>Wacky Stream Boards puts all of that on a big screen behind you. It looks clean on a phone, even from far away.</p>
+  <p>Here's the best part. <b>You never touch the board.</b> You only type in a Google Sheet, like a simple spreadsheet. The board reads the sheet every few seconds and updates by itself.</p>
+  <img class="shot" src="../images/guide/board-prefill.png" alt="A $10 pre-fill board with spots filled in and a chase card">
+
+  <h2 id="gear"><span class="num">2</span>What you need</h2>
+  <p>You don't need fancy gear. Here's what matters most, in order.</p>
+  <div class="gear">
+    <div class="item"><span class="tag">Must have</span><h4>A phone to go live</h4><p>Any newer iPhone or Android works. Use the back camera. It's much sharper than the front one.</p></div>
+    <div class="item"><span class="tag">Must have</span><h4>A phone tripod or mount</h4><p>Keeps the shot steady. Get one that can hold the phone at your chest height.</p></div>
+    <div class="item"><span class="tag">Must have</span><h4>A TV or monitor</h4><p>This sits behind you and shows the board. 40 inches or bigger is best. A 24 to 32 inch monitor works for small tables.</p></div>
+    <div class="item"><span class="tag">Must have</span><h4>Something to open the board on the TV</h4><p>A laptop with an HDMI cable, a small mini PC, or a smart TV web browser. Anything that can open a web page.</p></div>
+    <div class="item"><span class="tag">Must have</span><h4>Good Wi-Fi</h4><p>Aim for at least 10 Mbps upload. Run a free speed test before you go live. Plug in with a cable if you can.</p></div>
+    <div class="item"><span class="tag">Must have</span><h4>A Google account</h4><p>It's free. This is where your game sheet lives.</p></div>
+    <div class="item"><span class="tag nice">Nice to have</span><h4>A light for your face and cards</h4><p>A ring light or a small LED panel. Put it in front of you, not behind you.</p></div>
+    <div class="item"><span class="tag nice">Nice to have</span><h4>A second screen for the sheet</h4><p>A tablet, laptop, or second phone so you can type names while you rip.</p></div>
+    <div class="item"><span class="tag nice">Nice to have</span><h4>A label printer</h4><p>Only if you sell spots in your shop. Any 4x6 thermal shipping printer works (Rollo, MUNBYN, Phomemo, Zebra). For small stickers, a DYMO LabelWriter or Brother QL works too.</p></div>
+    <div class="item"><span class="tag nice">Nice to have</span><h4>A computer for streaming software</h4><p>Only if you want the board inside your video with OBS or TikTok LIVE Studio. A phone is fine to start.</p></div>
+  </div>
+  <div class="box gold"><b>TikTok LIVE check.</b> TikTok sets its own rules for who can go live. In 2026 that's usually 18 or older, about 1,000 followers (it can change by country), and an account in good standing. Selling on LIVE with TikTok Shop can need its own approval. Check the LIVE button in your TikTok app to see if you're ready.</div>
+
+  <h2 id="setup"><span class="num">3</span>The 10 minute setup</h2>
+  <ol class="steps">
+    <li><b>Get your game sheet.</b> Open the sheet link from the <a href="../downloads/">Downloads</a> page. Click <b>File &gt; Make a copy</b> so you have your own. Then click <b>Share</b>, set <b>General access</b> to <b>Anyone with the link</b>, and set it to <b>Viewer</b>. The board can't read a private sheet.</li>
+    <li><b>Make your board link.</b> On the computer hooked up to your TV, go to <a href="../#mine">boards.wackymclovin.com</a>. Scroll to <b>Using your own copy of a sheet</b>. Paste your sheet link, pick your game, and click <b>Make my link</b>.</li>
+    <li><b>Open your board.</b> Click <b>Open</b>. Bookmark that page so you never have to do this again. Press <b>F11</b> (Windows) or <b>Control + Command + F</b> (Mac) to make it full screen.</li>
+    <li><b>Test it.</b> On your phone or laptop, open your sheet. Type a name next to spot 1. Look at the TV. The name shows up in about 5 seconds. That's it. It works.</li>
+    <li><b>Set up your shot.</b> Put the TV behind where you sit. Put your phone on the tripod in front of you, about chest high. Make sure the whole board fits in the shot above your shoulders.</li>
+    <li><b>Fix the glare.</b> Turn the TV brightness down to about 60%. Turn off room lights that bounce off the screen. On iPhone, tap and hold on the TV in your camera to lock the focus.</li>
+    <li><b>Go live.</b> Open TikTok, tap the <b>+</b> button, swipe to <b>LIVE</b>, add a title, and go. Keep your sheet open on your second screen.</li>
+  </ol>
+  <div class="box tip"><b>Tip.</b> The board saves the last good info. If your Wi-Fi blips, the board stays up and catches up when it's back.</div>
+
+  <h2 id="night"><span class="num">4</span>Running a game night</h2>
+  <h3>Filling spots</h3>
+  <p>Your main sheet has three game tabs: <b>AUCTION</b>, <b>$10</b>, and <b>$30</b>. Each one has spots 1 to 24.</p>
+  <ul>
+    <li>Type the buyer's name in column <b>B</b> next to their spot.</li>
+    <li>On the auction board, type their bid in column <b>C</b>. The board shows the high bidder with a gold crown.</li>
+    <li>Type <code>FREE</code> in column C for a free spot. Type <code>winner</code> in column D to tag a winner.</li>
+  </ul>
+  <h3>Setting the chase card</h3>
+  <p>Each game tab has a matching <b>_CHASE</b> tab (like <code>$10_CHASE</code>). Only change the yellow boxes.</p>
+  <ul>
+    <li><b>Chase Image URL:</b> a picture link. See <a href="#pictures">Adding prize pictures</a>.</li>
+    <li><b>Chase Name:</b> what the card is.</li>
+    <li><b>Chase Value:</b> the prize or what it's worth.</li>
+    <li><b>Title, Price, Box, Banner:</b> the words on the board. Change them any time.</li>
+  </ul>
+  <p>When you change the chase, the board plays a reveal animation. Fans love it.</p>
+  <h3>Starting a fresh game (without losing the last one)</h3>
+  <ol class="steps">
+    <li>Right-click the <b>$10</b> tab at the bottom and pick <b>Duplicate</b>.</li>
+    <li>Rename the copy with the date, like <code>9_20_26_$10</code>. Clear the names in column B.</li>
+    <li>Open the <b>LIVE</b> tab. Type the new tab name next to <b>$10</b> in column B.</li>
+  </ol>
+  <p>The board switches to the new game in a few seconds. Your old game stays saved. If you spell a tab name wrong, the board just keeps showing the last good game.</p>
+
+  <h2 id="games"><span class="num">5</span>The games</h2>
+  <p>Every game has its own board. The four extra games each have their own Google Sheet, so make a copy of each one you want and make a board link for it (step 2 of the setup). Only type in the yellow boxes and the rows under the gold headers.</p>
+  <div class="games">
+    <div class="item"><h4>$1 Start Auction</h4><p>Spots with bids and a gold high-bid leader. Uses the AUCTION tab.</p></div>
+    <div class="item"><h4>$10 Pre-Fill</h4><p>Spots fill up green as people buy. No leader. Uses the $10 tab.</p></div>
+    <div class="item"><h4>$30 A Pack</h4><p>Same as pre-fill, set up for pack sales. Uses the $30 tab.</p></div>
+    <div class="item"><h4>Custom Auction</h4><p>Change anything right on the board. Click <b>Settings</b> to pick a tab, spot count, and labels.</p></div>
+    <div class="item"><h4>Rip Till You Hit</h4><p>Big pack counter for the person ripping now. Add each buyer at the bottom. Type the hit card when it lands and the board yells HIT!</p></div>
+    <div class="item"><h4>Pick Your Type</h4><p>A color grid. Type the buyer next to their type. Works for Pokemon types or One Piece colors.</p></div>
+    <div class="item"><h4>Case Break</h4><p>Tracks every box (sealed, ripping, done), up to 24 spots, and a live hit list.</p></div>
+    <div class="item"><h4>Wall of Hits</h4><p>Shows off the newest big pull, plus a wall of the night's hits. Great for clips.</p></div>
+  </div>
+  <img class="shot" src="../images/guide/board-rtyh.png" alt="Rip Till You Hit board">
+  <div class="box tip"><b>Tip.</b> Add <code>?sound=1</code> to the end of a game board address to play a chime on every hit.</div>
+
+  <h2 id="pictures"><span class="num">6</span>Adding prize pictures</h2>
+  <p>The board needs a direct picture link. The easy way:</p>
+  <ol class="steps">
+    <li>Open the <a href="../picture/">Picture Link Maker</a>.</li>
+    <li>Drag the product photo onto it from any website. Or paste a link.</li>
+    <li>If the picture shows up with a green check, click <b>Copy link</b>.</li>
+    <li>Paste it in the picture box in your sheet.</li>
+  </ol>
+  <p><b>Using your own photo?</b> Upload it to Google Drive. Click <b>Share</b>, set it to <b>Anyone with the link</b>, copy the link, and paste it in. The board fixes Drive links for you.</p>
+
+  <h2 id="shop"><span class="num">7</span>Shop orders and labels</h2>
+  <p>You can sell spots as products in your shop. When someone buys one, this all happens by itself:</p>
+  <ol class="steps">
+    <li>The order comes in (TikTok Shop orders show up in Shopify too).</li>
+    <li>The buyer gets the next open spot on the right board.</li>
+    <li>A line is added to the <b>LABELS</b> tab.</li>
+    <li>The <a href="../print/">Print Station</a> prints a spot label with the spot number, the buyer, and the order number.</li>
+  </ol>
+  <p>You just rip and read the label. No typing.</p>
+  <div class="box gold"><b>Good to know.</b> This part connects to your own Shopify store, so we set it up with you once. After that, it runs by itself. The steps below are what happens during that setup.</div>
+  <h3>Set it up once</h3>
+  <ol class="steps">
+    <li>Make a product for each game you sell, like <b>Wacky $10 Spot</b>. Turn on inventory tracking and set it to <b>24</b> so you never sell more spots than the board has.</li>
+    <li>Open the <b>SHOP</b> tab in your main sheet. Type part of the product name in column A and the board in column B (<code>AUCTION</code>, <code>$10</code>, <code>$30</code>, <code>TYPES</code>, <code>CASE</code>, or <code>RTYH</code>). Type <code>YES</code> in the ON column.</li>
+    <li>For Pick Your Type, make the product options match your types (Fire, Water...). The buyer lands on the type they picked.</li>
+    <li>On the computer with your label printer, open the <a href="../print/">Print Station</a>. Pick your label size. Click <b>Print a test label</b>.</li>
+    <li>Type <code>YES</code> next to <b>Test Order</b> in the SHOP tab. In about a minute a pretend order lands on the board and a label prints. Delete the test name when you're done.</li>
+  </ol>
+  <div class="box tip"><b>Tip.</b> Want labels to print with no pop-up? The Print Station page shows a one-line Chrome setting for Mac and Windows.</div>
+  <div class="box warn"><b>Heads up.</b> Buyer names come from the order. TikTok hides some buyer info, so a label may show the order number instead of a name. The spot is still saved to that order. If a board is full, the label prints <b>NO OPEN SPOT - CHECK</b> so you can fix it by hand.</div>
+
+  <h2 id="settings"><span class="num">8</span>Best settings</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Thing</th><th>Set it to</th><th>Why</th></tr>
+    <tr><td>TV picture mode</td><td>Standard or Game. Motion smoothing OFF.</td><td>Keeps text sharp on camera.</td></tr>
+    <tr><td>TV brightness</td><td>About 60%</td><td>Too bright looks washed out on a phone.</td></tr>
+    <tr><td>Browser zoom</td><td>100%</td><td>The board sizes itself to the screen.</td></tr>
+    <tr><td>Board layout</td><td>Wide TV = normal. Tall screen = tall layout (it switches by itself).</td><td>Fits any screen.</td></tr>
+    <tr><td>Phone camera</td><td>Back camera, 1080p, 30 fps</td><td>Sharp and smooth without heating up the phone.</td></tr>
+    <tr><td>Phone focus</td><td>Tap and hold on the TV to lock it</td><td>Stops the picture from pulsing.</td></tr>
+    <tr><td>Phone</td><td>Plugged in, Do Not Disturb on</td><td>No dead battery, no pop-ups on stream.</td></tr>
+    <tr><td>Internet</td><td>10 Mbps upload or more, cable if you can</td><td>Stops freezing.</td></tr>
+    <tr><td>OBS (optional)</td><td>Browser Source, paste the <b>OBS link</b> from the boards page, 1920 x 1080 (or 1080 x 1920 for vertical)</td><td>Puts the board right in your video.</td></tr>
+    <tr><td>TikTok LIVE Studio (optional)</td><td>Add the board as a window capture or link source</td><td>Same idea as OBS, if your account has LIVE Studio.</td></tr>
+  </table></div>
+
+  <h2 id="rules"><span class="num">9</span>Play by the rules</h2>
+  <p>Each app has its own rules for breaks. Rules change, so check them before you run a new game.</p>
+  <ul>
+    <li><b>TikTok Shop</b> allows breaks like personal breaks, pick your team or type, pull till you win, and case breaks. It bans things like bounties, pull games, King of the Hill, random teams, drafts, and points breaks.</li>
+    <li><b>Whatnot</b> doesn't allow prizes that depend on what gets pulled. Bonus items are fine when everyone who buys is guaranteed to get them, and you say so up front.</li>
+    <li>Always show what's in the box, what a spot gets, and the price before anyone buys.</li>
+  </ul>
+
+  <h2 id="help"><span class="num">10</span>Fixing problems</h2>
+  <details><summary>The board says it can't read my sheet.</summary><p>Your sheet is private. Click <b>Share</b>, set <b>General access</b> to <b>Anyone with the link</b>, and pick <b>Viewer</b>.</p></details>
+  <details><summary>I typed a name but the board didn't change.</summary><p>Wait 5 seconds. Make sure you're in the tab the board is showing (check the LIVE tab). Make sure the spot number is in column A and the name is in column B.</p></details>
+  <details><summary>My prize picture won't show.</summary><p>The link is probably a web page, not a picture. Use the <a href="../picture/">Picture Link Maker</a>. For Drive photos, set sharing to <b>Anyone with the link</b>.</p></details>
+  <details><summary>The board looks blurry on stream.</summary><p>Lock your camera focus on the TV, turn the brightness down, and turn off motion smoothing on the TV.</p></details>
+  <details><summary>A shop order didn't show up.</summary><p>Look at <b>Last Checked</b> in the SHOP tab. If it says PROBLEM, message us. Make sure the product name matches a row in the SHOP tab and that row says YES. Orders only count once they're paid.</p></details>
+  <details><summary>The label didn't print.</summary><p>Keep the Print Station page open and make sure Auto print says ON. Set your label printer as the default printer. Click <b>Print a test label</b> to check.</p></details>
+
+  <div class="dl"><b>Want this on paper?</b><span>A clean step by step PDF with the gear checklist.</span><a class="btn" href="../downloads/">Downloads</a></div>
+
+  <footer>Wacky Stream Boards by <a href="https://wackymclovin.com">Wacky McLovin</a>. Questions? Message us on TikTok or through the shop.</footer>
+</div>
+</body>
+</html>

@@ -16,6 +16,23 @@ var GOLD = '#ffcc33', BLACK = '#111111', YELLOW = '#fff4c2', GREY = '#eeeeee';
 var API_VERSION = '2026-07';
 var SPOT_TABS = ['AUCTION', '$10', '$30'];
 
+/** Makes clean "Template" copies other streamers can copy (File > Make a copy). Run right after createWackyBoards(). */
+function makeTemplates() {
+  var props = PropertiesService.getScriptProperties();
+  var folder = getFolder_('Wacky Stream Boards Templates');
+  var out = {};
+  ['MAIN', 'RTYH', 'TYPES', 'CASE', 'HITS'].forEach(function (k) {
+    var have = props.getProperty('TEMPLATE_' + k);
+    if (have) { out[k] = have; return; }
+    var src = DriveApp.getFileById(props.getProperty('WACKY_' + k));
+    var copy = src.makeCopy(src.getName().replace('Wacky Boards - ', 'TEMPLATE - Wacky Boards - '), folder);
+    copy.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    props.setProperty('TEMPLATE_' + k, copy.getId());
+    out[k] = copy.getId();
+  });
+  Logger.log('TEMPLATES ' + JSON.stringify(out));
+}
+
 function createWackyBoards() {
   var props = PropertiesService.getScriptProperties();
   var folder = getFolder_('Wacky Stream Boards');

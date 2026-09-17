@@ -114,9 +114,15 @@
     <li>Want to put an old break back up? Add <code>?tab=</code> and the tab name to the address, like <code>auction/?tab=9_13_26_AUC</code>.</li>
   </ol>
 
-  <h3>Use a different sheet</h3>
-  <div class="small">Running your own copy of the Main sheet? Paste its link here and every board on this page uses it.</div>
-  <div class="other"><input id="other" placeholder="https://docs.google.com/spreadsheets/d/..."><button class="btn" id="useOther">Use this sheet</button><button class="btn" id="resetOther">Back to default</button></div>
+  <h3 id="mine">Using your own copy of a sheet</h3>
+  <div class="small">Made your own copy of a game sheet? Paste its link, pick the board, and you get your own board link. Bookmark it on your TV computer.</div>
+  <div class="other"><input id="other" placeholder="Paste your Google Sheet link here">
+    <select id="otherBoard" class="btn" style="text-transform:none">
+      <option value="auction/">$1 Start Auction</option><option value="prefill/">$10 Pre-Fill</option><option value="pack/">$30 A Pack</option><option value="custom/">Custom Auction</option>
+      <option value="rtyh/">Rip Till You Hit</option><option value="types/">Pick Your Type</option><option value="case/">Case Break</option><option value="hits/">Wall of Hits</option><option value="">This whole page</option>
+    </select>
+    <button class="btn primary" id="useOther">Make my link</button><button class="btn" id="resetOther">Back to Wacky sheets</button></div>
+  <div class="other" id="mineOut" style="display:none"><input id="mineLink" readonly><a class="btn primary" id="mineOpen" target="_blank" rel="noopener">Open</a><button class="btn" id="mineCopy">Copy</button><button class="btn" id="mineObs">Copy OBS link</button></div>
 </div>
 
 <script src="assets/config.js"></script>
@@ -185,10 +191,22 @@
   }
   check(); setInterval(check, 8000);
 
+  const copy = (txt, btn, label) => {
+    const done = () => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = label, 1800); };
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(done, () => prompt('Copy this link:', txt));
+  };
   document.getElementById('useOther').onclick = () => {
     const id = S.sheetIdFrom(document.getElementById('other').value);
-    if (!id) { alert('That doesn\'t look like a Google Sheet link.'); return; }
-    location.search = '?sheet=' + encodeURIComponent(id);
+    if (!id) { alert('That doesn\'t look like a Google Sheet link. Copy the address from the top of your sheet.'); return; }
+    const board = document.getElementById('otherBoard').value;
+    if (!board) { location.search = '?sheet=' + encodeURIComponent(id); return; }
+    const u = new URL(board, location.href); u.searchParams.set('sheet', id);
+    const o = new URL(u.href); o.searchParams.set('clean', '1');
+    document.getElementById('mineOut').style.display = '';
+    document.getElementById('mineLink').value = u.href;
+    document.getElementById('mineOpen').href = u.href;
+    document.getElementById('mineCopy').onclick = e => copy(u.href, e.target, 'Copy');
+    document.getElementById('mineObs').onclick = e => copy(o.href, e.target, 'Copy OBS link');
   };
   document.getElementById('resetOther').onclick = () => { location.search = ''; };
 })();
