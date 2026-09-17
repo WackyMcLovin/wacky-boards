@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wacky McLovin Stream Boards</title>
+<link rel="icon" href="images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#050505; --panel:#111; --line:#2c2c2c; --gold:#f7c948; --gold-2:#ffe27a; --gold-3:#c99a1e; --green:#3ddc84; --red:#e2262b; --orange:#ff8a1f; --muted:#bdbdbd;
+          --head:"Anton",Impact,sans-serif; --body:"Barlow Condensed","Arial Narrow",Arial,sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; color:#fff; font:600 18px/1.35 var(--body); background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(247,201,72,.18), transparent 70%), var(--bg); min-height:100vh; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 16px 60px; }
+  h1 { font: italic 400 clamp(44px, 8vw, 84px)/1 var(--head); margin: 0; letter-spacing:.03em;
+       background: linear-gradient(180deg,var(--gold-2),var(--gold) 45%,var(--gold-3)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lead { color: var(--muted); margin: 6px 0 22px; font-size: 20px; }
+  .conn { display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:var(--panel); border:2px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:22px; }
+  .dot { display:inline-flex; align-items:center; gap:8px; font-weight:800; }
+  .dot::before { content:""; width:11px; height:11px; border-radius:50%; background:#777; }
+  .dot.ok { color: var(--green); } .dot.ok::before { background: var(--green); box-shadow:0 0 8px var(--green); }
+  .dot.err { color: #ff9a9a; } .dot.err::before { background: var(--red); }
+  .conn a { color: var(--gold); }
+  .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--panel); border: 3px solid var(--gold-3); border-radius: 16px; padding: 16px; display:flex; flex-direction:column; gap:8px; box-shadow: 0 5px 0 #000; }
+  .card h2 { font: italic 400 30px/1 var(--head); margin:0; letter-spacing:.03em; }
+  .card .what { color: var(--muted); font-size: 17px; }
+  .card .live { font-size: 16px; } .card .live b { color: var(--gold); }
+  .tag { align-self:flex-start; font: italic 400 15px/1 var(--head); letter-spacing:.05em; padding:5px 9px; border-radius:6px; background: var(--red); }
+  .tag.noleader { background:#333; }
+  .btns { display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; }
+  .btn { font: 800 15px var(--body); text-transform:uppercase; letter-spacing:.05em; text-decoration:none; background:#161616; color:var(--gold); border:2px solid var(--gold-3); border-radius:8px; padding:8px 12px; cursor:pointer; }
+  .btn:hover, .btn.primary { background: var(--gold); color:#000; }
+  h3 { font: italic 400 30px/1 var(--head); color: var(--gold); margin: 34px 0 10px; letter-spacing:.03em; }
+  ol { padding-left: 22px; margin: 0; } li { margin: 6px 0; }
+  code { background:#1b1b1b; border:1px solid #333; border-radius:5px; padding:1px 6px; font-size: 16px; }
+  .other { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .other input { flex:1 1 320px; background:#000; color:#fff; border:2px solid #333; border-radius:8px; padding:8px 10px; font: 600 16px var(--body); }
+  .small { color:#8d8d8d; font-size:15px; }
+  .top { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+  .brand { font: italic 400 22px/1 var(--head); color:#fff; text-decoration:none; letter-spacing:.06em; }
+  .top nav { display:flex; gap:6px; flex-wrap:wrap; }
+  .top nav a { color:var(--gold); text-decoration:none; font-weight:800; text-transform:uppercase; letter-spacing:.04em; font-size:15px; padding:6px 10px; border:2px solid #2c2c2c; border-radius:8px; }
+  .top nav a:hover { border-color: var(--gold); }
+  .newhere { display:block; background: var(--gold); color:#000; text-decoration:none; border-radius:12px; padding:14px 16px; margin: 0 0 18px; font-size:20px; box-shadow:0 5px 0 #7a5200; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="brand" href="https://wackymclovin.com">WACKY MCLOVIN</a>
+    <nav><a href="how-to/">How to use</a><a href="print/">Print Station</a><a href="picture/">Picture Link Maker</a><a href="downloads/">Downloads</a></nav></div>
+  <h1>Wacky Stream Boards</h1>
+  <div class="lead">Big, bright game boards for your TikTok, Whatnot or YouTube breaks. You type in a Google Sheet. The board on your TV changes by itself.</div>
+  <a class="newhere" href="how-to/"><b>New here?</b> Start with the 10 minute setup guide. No tech skills needed. &rarr;</a>
+
+  <div class="conn">
+    <span class="dot" id="dot">Checking the sheet...</span>
+    <span id="sheetlink"></span>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="conn" style="margin-top:18px;justify-content:space-between">
+    <span><b style="color:var(--gold)">Selling spots in your shop?</b> Open the Print Station on the computer that has your label printer. Every shop order grabs the next open spot and prints a spot label.</span>
+    <a class="btn primary" href="print/">Print Station</a>
+  </div>
+  <div class="conn" style="justify-content:space-between">
+    <span><b style="color:var(--gold)">Adding a reward picture?</b> Drag any product photo into the Picture Link Maker and it gives you the exact link to paste in the sheet.</span>
+    <a class="btn primary" href="picture/">Picture Link Maker</a>
+  </div>
+
+  <h3>Quick reference</h3>
+  <div class="small">The full step by step guide (with the gear list) is on the <a href="how-to/" style="color:var(--gold)">How to use</a> page and in <a href="downloads/" style="color:var(--gold)">Downloads</a>.</div>
+
+  <h3>Switching to a new tab (the LIVE tab)</h3>
+  <ol>
+    <li>For each new game, duplicate the <code>AUCTION</code>, <code>$10</code> or <code>$30</code> tab and give it a new name, like <code>9_16_26_AUC</code>.</li>
+    <li>Type that exact name next to the board in the LIVE tab (column B). The board on stream switches over within a few seconds. Column C can point at a different chase tab; leave it blank to keep the normal one.</li>
+    <li>No LIVE tab, or a blank cell? The board just uses <code>AUCTION</code> / <code>$10</code> / <code>$30</code> like before. A misspelled name keeps the last good game on screen.</li>
+  </ol>
+
+  <h3>Running a night (same sheet as always)</h3>
+  <ol>
+    <li>Type buyers into the <b>AUCTION</b>, <b>$10</b> or <b>$30</b> tab like normal: spot number in A, username in B, bid in C (type <code>FREE</code> for the free spot, <code>winner</code> in D to tag a winner).</li>
+    <li>Set the chase in the matching <b>_CHASE</b> tab: picture link in B1, chase name in B2, prize in B3. The board plays a reveal when it changes.</li>
+    <li>Optional extras in a _CHASE tab: add a row with <code>Box</code> in column A and the box name in B, or <code>Chase 2 Image URL</code> / <code>Chase 2 Name</code> / <code>Chase 2 Value</code> to show up to 4 chases.</li>
+    <li>When a break is done: either point the LIVE tab at a fresh tab, or (the old way) duplicate the tab to save it with the date and clear the live one.</li>
+  </ol>
+
+  <h3>The extra games (RTYH, Pick Your Type, Case Break, Wall of Hits)</h3>
+  <ol>
+    <li>Each one has its own Google Sheet (use the <b>Open its Google Sheet</b> link on its card). Only change the yellow boxes and the rows under the gold headers.</li>
+    <li><b>RTYH:</b> add a row at the bottom for each new ripper, bump PACKS as you open, and type the HIT CARD when it lands. The board plays a HIT! celebration.</li>
+    <li><b>Pick Your Type:</b> type the buyer next to their type or color. COLOR can be a name (red, fire, water...) or a code like #ff8800.</li>
+    <li><b>Case Break:</b> set each box to sealed, ripping or done, fill spots, and add hits at the bottom of the hit list.</li>
+    <li><b>Wall of Hits:</b> add each big pull at the bottom with a picture link. The newest one gets the spotlight.</li>
+    <li>Add <code>?sound=1</code> to a board link for a short chime on each hit.</li>
+  </ol>
+
+  <h3>Rewards and real slab photos</h3>
+  <ol>
+    <li>Rewards live in each board's <b>_CHASE</b> tab. Picture in B1, name in B2, prize in B3. Show up to 4 by adding rows <code>Chase 2 Image URL</code>, <code>Chase 2 Name</code>, <code>Chase 2 Value</code> (and 3, 4).</li>
+    <li>For a real photo of your own slab or prize: upload it to Google Drive, set sharing to <b>Anyone with the link</b>, and paste the share link in the picture cell.</li>
+    <li>For a PSA slab: take a clear photo of the slab (or copy the photo from the PSA cert page) and use the Picture Link Maker.</li>
+    <li>Easiest way to get any picture link: open the <a href="picture/">Picture Link Maker</a>, drag the product photo onto it, click <b>Copy link</b>, and paste it in the sheet with Cmd+Shift+V.</li>
+  </ol>
+
+  <h3>Putting a board on stream</h3>
+  <ol>
+    <li>Click <b>OBS link</b> on a board above. That copies an address that hides every button and message.</li>
+    <li>In OBS add a <b>Browser Source</b>, paste the link. Use 1920 x 1080 for a wide scene, or 1080 x 1920 for Whatnot / TikTok (the board switches to the tall layout on its own).</li>
+    <li>Want to put an old break back up? Add <code>?tab=</code> and the tab name to the address, like <code>auction/?tab=9_13_26_AUC</code>.</li>
+  </ol>
+
+  <h3>Use a different sheet</h3>
+  <div class="small">Running your own copy of the Main sheet? Paste its link here and every board on this page uses it.</div>
+  <div class="other"><input id="other" placeholder="https://docs.google.com/spreadsheets/d/..."><button class="btn" id="useOther">Use this sheet</button><button class="btn" id="resetOther">Back to default</button></div>
+</div>
+
+<script src="assets/config.js"></script>
+<script src="assets/sheet.js"></script>
+<script>
+(function () {
+  const S = window.DonHuntSheet;
+  const P = new URLSearchParams(location.search);
+  const BOARDS = [
+    { key: 'auction', path: 'auction/', name: '$1 Start Auction', what: 'Reads the AUCTION tab + AUCTION_CHASE. Shows the high bid and leader.', leader: true, tab: 'AUCTION' },
+    { key: 'prefill', path: 'prefill/', name: '$10 Pre-Fill', what: 'Reads the $10 tab + $10_CHASE. Shows spots filled, no leader.', leader: false, tab: '$10' },
+    { key: 'pack', path: 'pack/', name: '$30 A Pack', what: 'Reads the $30 tab + $30_CHASE. Shows packs sold, no leader.', leader: false, tab: '$30' },
+    { key: 'custom', path: 'custom/', name: 'Custom Auction', what: 'Pick any tab from its Settings button. Change spots (up to 24), leader, labels, or type names right on the board.', leader: true, tab: 'AUCTION' },
+    { key: 'rtyh', path: 'rtyh/', name: 'Rip Till You Hit', what: 'Big pack counter for the current ripper, what counts as a hit, a HIT! celebration, and a hit board with stats.', game: true },
+    { key: 'types', path: 'types/', name: 'Pick Your Type', what: 'Color Hunt / Pick Your Type grid. Each type or color lights up with its owner. Works for Pokemon types or One Piece colors.', game: true },
+    { key: 'case', path: 'case/', name: 'Case Break', what: 'Box-by-box case tracker (sealed, ripping, done), up to 24 spots, and a live hit feed with celebrations.', game: true },
+    { key: 'hits', path: 'hits/', name: 'Wall of Hits', what: 'Spotlight on the newest hit plus a wall of the night\'s pulls. Great for clips.', game: true },
+  ];
+  const GS = (window.DONHUNT_CONFIG || {}).gameSheets || {};
+  const sheetParam = P.get('sheet') ? '?sheet=' + encodeURIComponent(S.SHEET_ID) : '';
+  const cards = document.getElementById('cards');
+  BOARDS.forEach(b => {
+    const c = document.createElement('div'); c.className = 'card';
+    const url = b.path + (b.game ? '' : sheetParam);
+    const obs = new URL(b.path, location.href); if (sheetParam && !b.game) obs.searchParams.set('sheet', S.SHEET_ID); obs.searchParams.set('clean', '1');
+    const gsid = b.game ? GS[b.key] : '';
+    c.innerHTML = `<span class="tag ${b.leader || b.game ? '' : 'noleader'}">${b.game ? 'Own sheet' : b.leader ? 'Auction + leader' : 'Pre-fill, no leader'}</span>
+      <h2></h2><div class="what"></div>${b.game ? (gsid ? `<div class="live"><a href="https://docs.google.com/spreadsheets/d/${gsid}/edit" target="_blank" rel="noopener" style="color:var(--gold)">Open its Google Sheet</a></div>` : '<div class="live">Sheet not connected yet</div>') : `<div class="live" data-key="${b.key}" data-tab="${b.tab}">Showing: <b>...</b></div>`}
+      <div class="btns"><a class="btn primary" href="${url}">Open board</a><button class="btn" data-obs="${obs.href}">OBS link</button></div>`;
+    c.querySelector('h2').textContent = b.name;
+    c.querySelector('.what').textContent = b.what;
+    cards.appendChild(c);
+  });
+  cards.addEventListener('click', e => {
+    const b = e.target.closest('[data-obs]'); if (!b) return;
+    const done = () => { b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'OBS link', 1800); };
+    (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.obs) : Promise.reject()).then(done, () => { prompt('Copy this link:', b.dataset.obs); });
+  });
+
+  const dot = document.getElementById('dot');
+  if (S.SHEET_ID) {
+    const a = document.createElement('a'); a.href = S.BASE + '/edit'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open the Google Sheet';
+    document.getElementById('sheetlink').appendChild(a);
+  }
+  async function check() {
+    if (!S.SHEET_ID) { dot.className = 'dot err'; dot.textContent = 'No Google Sheet connected yet (add its ID in assets/config.js)'; return; }
+    const lv = await S.readLive();
+    const live = lv.ok ? lv.boards : {};
+    const lines = [...document.querySelectorAll('.live[data-tab]')];
+    const res = await Promise.all(lines.map(l => {
+      const row = live[l.dataset.key];
+      return S.readTab((row && row.tab) || l.dataset.tab).then(r => ({ r, tab: (row && row.tab) || l.dataset.tab }));
+    }));
+    if (!lv.ok && lv.reason !== 'notab') {
+      dot.className = 'dot err';
+      dot.textContent = lv.reason === 'private' ? 'Sheet is private: set Share > Anyone with the link > Viewer' : 'Can\'t reach the sheet right now, retrying';
+      return;
+    }
+    dot.className = 'dot ok';
+    dot.textContent = lv.ok ? 'Sheet connected (following the LIVE tab)' : 'Sheet connected (no LIVE tab, using AUCTION / $10 / $30)';
+    lines.forEach((l, i) => {
+      const { r, tab } = res[i];
+      const n = r.ok ? r.rows.filter(x => /^\d+$/.test((x[0] || '').trim()) && +x[0] <= 24 && (x[1] || '').trim()).length : null;
+      l.querySelector('b').textContent = r.ok ? tab + ' (' + n + '/24 filled)' : tab + ' - tab not found';
+    });
+  }
+  check(); setInterval(check, 8000);
+
+  document.getElementById('useOther').onclick = () => {
+    const id = S.sheetIdFrom(document.getElementById('other').value);
+    if (!id) { alert('That doesn\'t look like a Google Sheet link.'); return; }
+    location.search = '?sheet=' + encodeURIComponent(id);
+  };
+  document.getElementById('resetOther').onclick = () => { location.search = ''; };
+})();
+</script>
+</body>
+</html>

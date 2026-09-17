@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wacky Boards - Print Station</title>
+<link rel="icon" href="../images/favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style id="pagesize">@page { size: 4in 6in; margin: 0; }</style>
+<style>
+  :root { --bg:#050505; --panel:#111; --line:#2c2c2c; --gold:#f7c948; --gold-3:#c99a1e; --green:#3ddc84; --red:#e2262b; --muted:#bdbdbd;
+          --head:"Anton",Impact,sans-serif; --body:"Barlow Condensed","Arial Narrow",Arial,sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; color:#fff; font:600 18px/1.35 var(--body); background: var(--bg); min-height:100vh; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 22px 16px 60px; }
+  a { color: var(--gold); }
+  h1 { font: italic 400 clamp(40px, 7vw, 70px)/1 var(--head); margin: 6px 0 4px; color: var(--gold); letter-spacing:.03em; }
+  .lead { color: var(--muted); margin: 0 0 18px; font-size: 20px; }
+  .status { display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--panel); border:3px solid var(--line); border-radius:16px; padding:16px 18px; margin-bottom:16px; }
+  .light { width:26px; height:26px; border-radius:50%; background:#666; flex:none; }
+  .status.ok { border-color: var(--green); } .status.ok .light { background: var(--green); box-shadow:0 0 14px var(--green); animation: pulse 2s infinite; }
+  .status.err { border-color: var(--red); } .status.err .light { background: var(--red); }
+  .status.off { border-color: #555; }
+  @keyframes pulse { 50% { opacity:.45; } }
+  .status .big { font: italic 400 32px/1 var(--head); letter-spacing:.03em; }
+  .status .count { margin-left:auto; font: italic 400 44px/1 var(--head); color: var(--gold); text-align:right; }
+  .status .count span { display:block; font: 700 14px var(--body); color: var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin: 0 0 16px; }
+  .btn { font: 800 16px var(--body); text-transform:uppercase; letter-spacing:.05em; background:#161616; color:var(--gold); border:2px solid var(--gold-3); border-radius:10px; padding:10px 14px; cursor:pointer; }
+  .btn:hover, .btn.primary { background: var(--gold); color:#000; }
+  .btn.onoff.on { background: var(--green); border-color: var(--green); color:#000; }
+  select { font: 700 17px var(--body); background:#000; color:#fff; border:2px solid #333; border-radius:10px; padding:9px 10px; }
+  table { width:100%; border-collapse: collapse; background: var(--panel); border-radius: 12px; overflow:hidden; }
+  th, td { text-align:left; padding: 8px 10px; border-bottom: 1px solid #222; }
+  th { background:#1a1a1a; color: var(--gold); text-transform: uppercase; font-size: 14px; letter-spacing:.06em; }
+  td.spot { font: italic 400 26px/1 var(--head); color: var(--gold); }
+  tr.bad td { color: #ff9a9a; }
+  .tip { background:#0f0f0f; border:2px dashed #333; border-radius:12px; padding:12px 14px; margin-top:20px; color: var(--muted); }
+  .tip b { color:#fff; }
+  code { background:#1b1b1b; border:1px solid #333; border-radius:5px; padding:1px 6px; font-size: 15px; color:#fff; word-break: break-all; }
+  .tablewrap { overflow-x:auto; }
+
+  /* ---------- the label itself (only visible when printing) ---------- */
+  #label { display:none; }
+  @media print {
+    body { background:#fff; }
+    .wrap { display:none !important; }
+    #label { display:flex; }
+  }
+  #label { width: var(--lw, 4in); height: var(--lh, 6in); color:#000; background:#fff; flex-direction:column; align-items:stretch; justify-content:space-between;
+           padding: .12in; font-family: var(--body); overflow:hidden; }
+  #label .l-board { font: 800 .34in/1 var(--body); text-transform: uppercase; text-align:center; border-bottom: .04in solid #000; padding-bottom:.05in; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #label .l-spotlbl { font: 800 .22in/1 var(--body); text-align:center; letter-spacing:.1em; margin-top:.06in; }
+  #label .l-spot { font: 400 2.4in/0.95 var(--head); text-align:center; }
+  #label .l-spot.long { font-size: 1in; }
+  #label .l-buyer { font: 800 .46in/1.05 var(--body); text-align:center; word-break: break-word; }
+  #label .l-meta { font: 700 .17in/1.2 var(--body); text-align:center; border-top: .03in solid #000; padding-top: .05in; }
+  #label .l-warn { font: 800 .3in/1.1 var(--body); text-align:center; background:#000; color:#fff; padding:.04in; }
+  /* small labels: side by side */
+  #label.small { flex-direction: row; align-items: center; padding: .05in .08in; gap:.08in; }
+  #label.small .l-left { flex:none; text-align:center; }
+  #label.small .l-spot { font-size: calc(var(--lh) * .72); line-height:.9; }
+  #label.small .l-spot.long { font-size: calc(var(--lh) * .3); }
+  #label.small .l-spotlbl { font-size: .09in; margin:0; }
+  #label.small .l-right { flex:1; min-width:0; display:flex; flex-direction:column; gap:.02in; }
+  #label.small .l-board { font-size: .12in; border:0; padding:0; text-align:left; }
+  #label.small .l-buyer { font-size: .19in; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #label.small .l-meta { font-size: .085in; border:0; padding:0; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #label.small .l-warn { font-size: .1in; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../">&larr; Wacky Boards</a>
+  <h1>Print Station</h1>
+  <div class="lead">Leave this page open on the computer that has your label printer. When someone buys a spot in your shop, the spot goes on the board and the label prints here. You don't touch anything.</div>
+
+  <div class="status off" id="status">
+    <div class="light"></div>
+    <div><div class="big" id="stBig">Starting up...</div><div id="stSmall" style="color:var(--muted)"></div></div>
+    <div class="count" id="count">0<span>labels printed</span></div>
+  </div>
+
+  <div class="row">
+    <button class="btn onoff on" id="auto">Auto print: ON</button>
+    <label>Label size
+      <select id="size">
+        <option value="4x6">4 x 6 in (shipping label printer)</option>
+        <option value="4x3">4 x 3 in</option>
+        <option value="2.25x1.25">2.25 x 1.25 in (DYMO 30334)</option>
+        <option value="2x1">2 x 1 in (small sticker)</option>
+        <option value="62x29mm">62 x 29 mm (Brother DK-1209)</option>
+      </select>
+    </label>
+    <button class="btn" id="test">Print a test label</button>
+    <button class="btn" id="sound">Sound: OFF</button>
+  </div>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Time</th><th>Order</th><th>Buyer</th><th>Board</th><th>Spot</th><th>Status</th><th></th></tr></thead>
+    <tbody id="list"><tr><td colspan="7" style="color:#777">No shop spots yet tonight.</td></tr></tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <b>Want labels to print with no pop-up?</b> Chrome normally asks "Print?" every time. To skip that, open Chrome with the print pop-up turned off:<br><br>
+    <b>Mac:</b> quit Chrome, open the Terminal app, paste this and press Enter:<br>
+    <code>open -na "Google Chrome" --args --kiosk-printing https://boards.wackymclovin.com/print/</code><br><br>
+    <b>Windows:</b> right-click your Chrome shortcut &gt; Properties &gt; at the end of <b>Target</b> add a space and <code>--kiosk-printing</code> &gt; OK. Open Chrome from that shortcut.<br><br>
+    Then set your label printer as the default printer (the first time, print one test label and pick it in the pop-up). Labels print to the default printer from then on.
+  </div>
+</div>
+
+<div id="label"></div>
+
+<script src="../assets/config.js"></script>
+<script src="../assets/sheet.js"></script>
+<script>
+(function () {
+  const S = window.DonHuntSheet;
+  const $ = id => document.getElementById(id);
+  const LS = 'wacky-print:';
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(LS + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  let seen = new Set(store.get('seen', []));
+  let printedCount = store.get('count', 0);
+  let auto = store.get('auto', true);
+  let sound = store.get('sound', false);
+  let size = store.get('size', '4x6');
+  let first = !store.get('started', false);
+  const queue = []; let printing = false;
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function applySize() {
+    let w, h;
+    if (size === '62x29mm') { w = '62mm'; h = '29mm'; }
+    else { const [a, b] = size.split('x'); w = a + 'in'; h = b + 'in'; }
+    $('pagesize').textContent = '@page { size: ' + w + ' ' + h + '; margin: 0; }';
+    const L = $('label');
+    L.style.setProperty('--lw', w); L.style.setProperty('--lh', h);
+    L.className = (size === '4x6') ? '' : 'small';
+    if (size === '4x3') L.className = 'small';
+    $('size').value = size;
+  }
+  function paintButtons() {
+    $('auto').textContent = 'Auto print: ' + (auto ? 'ON' : 'OFF'); $('auto').classList.toggle('on', auto);
+    $('sound').textContent = 'Sound: ' + (sound ? 'ON' : 'OFF'); $('sound').classList.toggle('on', sound);
+    $('count').firstChild.nodeValue = printedCount;
+  }
+
+  function fillLabel(x) {
+    const L = $('label');
+    const spot = String(x.spot || '?');
+    const long = spot.length > 3;
+    const bad = !/ready/i.test(x.status || 'ready');
+    const meta = [x.order, x.item, x.time].filter(Boolean).map(esc).join(' &middot; ');
+    if (L.className === 'small') {
+      L.innerHTML = `<div class="l-left"><div class="l-spotlbl">SPOT</div><div class="l-spot ${long ? 'long' : ''}">${esc(spot)}</div></div>
+        <div class="l-right"><div class="l-board">${esc(x.board)}</div><div class="l-buyer">${esc(x.buyer)}</div><div class="l-meta">${meta}</div>${bad ? `<div class="l-warn">${esc(x.status)}</div>` : ''}</div>`;
+    } else {
+      L.innerHTML = `<div class="l-board">${esc(x.board)}</div><div class="l-spotlbl">SPOT</div><div class="l-spot ${long ? 'long' : ''}">${esc(spot)}</div>
+        <div class="l-buyer">${esc(x.buyer)}</div>${bad ? `<div class="l-warn">${esc(x.status)}</div>` : ''}<div class="l-meta">${meta}</div>`;
+    }
+  }
+  function printNext() {
+    if (printing || !queue.length) return;
+    printing = true;
+    const x = queue.shift();
+    fillLabel(x);
+    const done = () => { window.removeEventListener('afterprint', done); printing = false; printedCount++; store.set('count', printedCount); paintButtons(); setTimeout(printNext, 400); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => { try { window.print(); } catch (e) { done(); } }, 150);
+  }
+  function beep() {
+    if (!sound) return;
+    try { const c = new (window.AudioContext || window.webkitAudioContext)(); [880, 1320].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.frequency.value = f; o.connect(g); g.connect(c.destination); const t = c.currentTime + i * .15; g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .3); o.start(t); o.stop(t + .3); }); } catch (e) {}
+  }
+
+  function setStatus(kind, big, small) { $('status').className = 'status ' + kind; $('stBig').textContent = big; $('stSmall').textContent = small || ''; }
+
+  let rowsCache = [];
+  function renderList() {
+    const tb = $('list');
+    const rows = rowsCache.slice(-40).reverse();
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="7" style="color:#777">No shop spots yet tonight.</td></tr>'; return; }
+    tb.innerHTML = rows.map((x, i) => `<tr class="${/ready/i.test(x.status) ? '' : 'bad'}"><td>${esc(x.time)}</td><td>${esc(x.order)}</td><td>${esc(x.buyer)}</td><td>${esc(x.board)}</td><td class="spot">${esc(x.spot)}</td><td>${esc(x.status)}</td><td><button class="btn" data-i="${rowsCache.length - 1 - i}">Print</button></td></tr>`).join('');
+  }
+  $('list').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (!b) return; queue.push(rowsCache[+b.dataset.i]); printNext(); });
+
+  async function tick() {
+    if (!S.SHEET_ID) { setStatus('err', 'No sheet connected', 'Add the Main sheet ID in assets/config.js'); return; }
+    const r = await S.readTab('LABELS');
+    if (!r.ok) {
+      const why = { private: 'The sheet is private. Share > Anyone with the link > Viewer.', notab: 'The Main sheet has no LABELS tab.', offline: 'Can\'t reach Google right now. Trying again...' }[r.reason] || r.reason;
+      setStatus('err', 'Not connected', why); return;
+    }
+    const rows = [];
+    r.rows.forEach((c, i) => {
+      if (i === 0 || !(c[1] || c[4])) return;
+      rows.push({ key: (c[8] || c[1]) + '|' + c[3] + '|' + c[4] + '|' + i, time: c[0], order: c[1], buyer: c[2], board: c[3], spot: c[4], item: c[5], channel: c[6], status: c[7] || 'READY' });
+    });
+    rowsCache = rows;
+    let fresh = 0;
+    rows.forEach(x => {
+      if (seen.has(x.key)) return;
+      seen.add(x.key);
+      if (first) return;             // first time on this computer: don't print old orders
+      fresh++;
+      if (auto) queue.push(x);
+    });
+    if (first) { first = false; store.set('started', true); }
+    store.set('seen', [...seen].slice(-3000));
+    renderList();
+    if (fresh) beep();
+    printNext();
+    setStatus(auto ? 'ok' : 'off', auto ? 'Watching for shop orders' : 'Auto print is OFF', 'Last check ' + new Date().toLocaleTimeString() + ' - ' + rows.length + ' spot label(s) in the sheet');
+  }
+
+  $('auto').onclick = () => { auto = !auto; store.set('auto', auto); paintButtons(); tick(); };
+  $('sound').onclick = () => { sound = !sound; store.set('sound', sound); paintButtons(); beep(); };
+  $('size').onchange = () => { size = $('size').value; store.set('size', size); applySize(); };
+  $('test').onclick = () => { queue.push({ time: new Date().toLocaleTimeString(), order: '#TEST', buyer: 'TEST BUYER', board: '$10 Pre-Fill', spot: '7', item: 'Test label', status: 'READY' }); printedCount--; printNext(); };
+
+  applySize(); paintButtons();
+  tick(); setInterval(tick, 5000);
+})();
+</script>
+</body>
+</html>

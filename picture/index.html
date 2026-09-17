@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wacky Boards Picture Link Maker</title>
+<link rel="icon" href="../images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#050505; --panel:#111; --line:#2c2c2c; --gold:#ffcc33; --gold-2:#ffe27a; --gold-3:#d19b12; --green:#2fe07f; --red:#ff4d4d; --orange:#ff9d2e; --muted:#bdbdbd;
+          --head:"Anton",Impact,sans-serif; --body:"Barlow Condensed","Arial Narrow",Arial,sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; color:#fff; font:600 19px/1.35 var(--body); background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,204,51,.16), transparent 70%), var(--bg); min-height:100vh; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; }
+  a { color: var(--gold); }
+  .back { font-size: 16px; }
+  h1 { font: italic 400 clamp(40px, 7vw, 72px)/1 var(--head); margin: 8px 0 4px; letter-spacing:.02em;
+       background: linear-gradient(180deg,var(--gold-2),var(--gold) 50%,var(--gold-3)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lead { color: var(--muted); margin: 0 0 18px; font-size: 21px; }
+  .drop { border: 4px dashed var(--gold-3); border-radius: 18px; background: #0d0d0d; padding: 34px 18px; text-align: center; transition: background .15s, border-color .15s; }
+  .drop.over { background: #1d1705; border-color: var(--gold); }
+  .drop .big { font: italic 400 clamp(28px, 4.4vw, 44px)/1.05 var(--head); letter-spacing: .02em; }
+  .drop .small { color: var(--muted); margin-top: 6px; }
+  .or { text-align: center; color: #777; margin: 14px 0; letter-spacing: .2em; font-size: 15px; }
+  .pastebox { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pastebox input { flex: 1 1 320px; min-width: 0; background: #000; color: #fff; border: 2px solid #3a3a3a; border-radius: 10px; padding: 12px 14px; font: 600 18px var(--body); }
+  .btn { font: 800 17px var(--body); text-transform: uppercase; letter-spacing: .05em; background: #161616; color: var(--gold); border: 2px solid var(--gold-3); border-radius: 10px; padding: 11px 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+  .btn:hover { background: var(--gold); color: #000; }
+  .btn.primary { background: var(--gold); color: #000; font-size: 22px; padding: 14px 22px; }
+  .btn.primary:hover { background: var(--gold-2); }
+  .result { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 18px; background: var(--panel); border: 3px solid var(--line); border-radius: 18px; padding: 16px; }
+  .result.good { border-color: var(--green); } .result.warn { border-color: var(--orange); } .result.bad { border-color: var(--red); }
+  @media (max-width: 700px) { .result { grid-template-columns: 1fr; } }
+  .preview { background: #0d0d0d; border: 4px solid var(--gold); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 280px; }
+  .preview .head { background: #ff2b2b; text-align: center; font: italic 400 26px/1.3 var(--head); letter-spacing: .12em; }
+  .preview .imgbox { flex: 1; display: grid; place-items: center; padding: 10px; min-height: 220px; }
+  .preview img { max-width: 100%; max-height: 260px; object-fit: contain; }
+  .preview .empty { color: #555; font: italic 400 22px var(--head); text-transform: uppercase; }
+  .verdict { font: italic 400 30px/1.1 var(--head); letter-spacing: .02em; margin-bottom: 6px; }
+  .good .verdict { color: var(--green); } .warn .verdict { color: var(--orange); } .bad .verdict { color: var(--red); }
+  .why { color: #ddd; margin-bottom: 12px; }
+  .linkout { width: 100%; background: #000; color: #9fd; border: 2px solid #333; border-radius: 8px; padding: 10px; font: 500 14px ui-monospace, Menlo, monospace; margin-bottom: 12px; }
+  .next { margin-top: 12px; color: var(--muted); font-size: 17px; }
+  .next b { color: #fff; }
+  h3 { font: italic 400 30px/1 var(--head); color: var(--gold); margin: 34px 0 10px; letter-spacing: .03em; }
+  ol { padding-left: 24px; margin: 0; } li { margin: 7px 0; }
+  code, kbd { background:#1b1b1b; border:1px solid #333; border-radius:5px; padding:1px 6px; font-size: 16px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&larr; Wacky Boards</a>
+  <h1>Picture Link Maker</h1>
+  <div class="lead">Get a picture onto the board in 3 steps: drag it here, copy the link, paste it in the sheet.</div>
+
+  <div class="drop" id="drop">
+    <div class="big">Drag a product photo here</div>
+    <div class="small">Open the product on any website (TCGplayer, eBay, PSA, the shop...) and drag the <b>picture itself</b> onto this box.</div>
+  </div>
+  <div class="or">OR</div>
+  <div class="pastebox">
+    <input id="paste" placeholder="Paste a picture link, Google Drive link, or PSA cert number" autocomplete="off">
+    <button class="btn" id="check">Check it</button>
+  </div>
+
+  <div class="result" id="result" hidden>
+    <div class="preview">
+      <div class="head">Chase</div>
+      <div class="imgbox" id="imgbox"><div class="empty">No picture</div></div>
+    </div>
+    <div>
+      <div class="verdict" id="verdict"></div>
+      <div class="why" id="why"></div>
+      <div id="linkArea" hidden>
+        <input class="linkout" id="linkout" readonly>
+        <button class="btn primary" id="copy">Copy link</button>
+        <div class="next"><b>Next:</b> in the Google Sheet, click the picture cell of the <b>_CHASE</b> tab (B1 for the main chase) and paste with <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> (Windows: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>). The board updates in a few seconds.</div>
+      </div>
+      <div id="extra"></div>
+    </div>
+  </div>
+
+  <h3>Using your own photo</h3>
+  <ol>
+    <li>Upload the photo to <b>Google Drive</b>.</li>
+    <li>Right-click it, choose <b>Share</b>, set General access to <b>Anyone with the link</b>, and click <b>Copy link</b>.</li>
+    <li>Paste that link in the box above to double-check it, then paste it in the sheet.</li>
+  </ol>
+
+  <h3>Good to know</h3>
+  <ol>
+    <li>Don't paste the picture itself into the sheet, and don't use <code>=IMAGE(...)</code>. The board needs the <b>link</b> as plain text.</li>
+    <li>If a website won't let its picture show (you'll see a red message here), save the picture and use the Google Drive steps above.</li>
+    <li>PSA slabs: you can type just the <b>cert number</b>. Once PSA approves our API access the board pulls PSA's own photo. Until then, drag the slab photo from its psacard.com cert page instead.</li>
+    <li>Rewards: picture in <b>B1</b>, name in <b>B2</b>, prize in <b>B3</b>. For more rewards add rows <code>Chase 2 Image URL</code>, <code>Chase 2 Name</code>, <code>Chase 2 Value</code> (up to 4).</li>
+  </ol>
+</div>
+
+<script src="../assets/images.js"></script>
+<script>
+(function () {
+  const IMG = window.DonHuntImages;
+  const $ = id => document.getElementById(id);
+  const drop = $('drop'), result = $('result');
+
+  function show(state, verdict, why, link, extraHtml) {
+    result.hidden = false;
+    result.className = 'result ' + state;
+    $('verdict').textContent = verdict;
+    $('why').textContent = why || '';
+    $('linkArea').hidden = !link;
+    $('linkout').value = link || '';
+    $('copy').textContent = 'Copy link';
+    $('extra').innerHTML = extraHtml || '';
+    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function preview(url) {
+    const box = $('imgbox');
+    box.innerHTML = '';
+    if (!url) { box.innerHTML = '<div class="empty">No picture</div>'; return; }
+    const im = new Image(); im.referrerPolicy = 'no-referrer'; im.src = url; im.alt = '';
+    box.appendChild(im);
+  }
+
+  async function handle(raw, fromDrop) {
+    raw = String(raw || '').trim();
+    if (!raw) return;
+    const f = IMG.fixImageLink(raw);
+    if (f.kind === 'cert') {
+      preview('');
+      return show('warn', 'PSA cert ' + f.cert, 'Typing the cert number works once PSA approves our API access. For now, open the cert page and drag the slab photo onto the box above.', f.cert,
+        '<p><a class="btn" target="_blank" rel="noopener" href="https://www.psacard.com/cert/' + f.cert + '">Open PSA cert ' + f.cert + '</a></p>');
+    }
+    if (f.kind === 'page') {
+      preview('');
+      return show('bad', 'That\'s a web page, not a picture', 'Open that page, then drag the product photo itself onto the box above (or right-click the photo and choose Copy Image Address).', '',
+        '<p><a class="btn" target="_blank" rel="noopener" href="' + f.page.replace(/"/g, '&quot;') + '">Open that page</a></p>');
+    }
+    if (f.kind !== 'image' && f.kind !== 'drive') {
+      preview('');
+      return show('bad', 'That isn\'t a link', 'Drag the picture onto the box above, or paste a link that starts with https://');
+    }
+    show('warn', 'Checking...', 'Making sure the board can show this picture.', '');
+    preview(f.url);
+    const t = await IMG.testImage(f.url);
+    if (!t.ok) {
+      const drive = f.kind === 'drive';
+      return show('bad', 'The board can\'t show this one',
+        drive ? 'Google Drive won\'t share it yet. In Drive, right-click the file > Share > General access: Anyone with the link, then try again.'
+              : 'That website blocks its pictures from showing on other pages. Save the picture, put it in Google Drive (steps below), and use that link instead.', '');
+    }
+    if (Math.min(t.w, t.h) < 250) {
+      return show('warn', 'Works, but it\'s small (' + t.w + ' x ' + t.h + ')', 'It may look blurry on the TV. Try to find a bigger version, or use it if nothing better exists.', f.url);
+    }
+    show('good', 'Looks great! ' + t.w + ' x ' + t.h, fromDrop ? 'Got the picture link from what you dropped.' : 'This link works on the board.', f.url);
+  }
+
+  // drag and drop
+  ['dragenter', 'dragover'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'dragend'].forEach(ev => document.addEventListener(ev, e => { if (!e.relatedTarget) drop.classList.remove('over'); }));
+  document.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('over');
+    const dt = e.dataTransfer;
+    const link = IMG.linkFromTransfer(dt);
+    if (!link && dt.files && dt.files.length) {
+      preview('');
+      return show('bad', 'That\'s a file from your computer', 'The board needs a link. Upload the photo to Google Drive, share it as Anyone with the link, and paste that link here (steps below).', '');
+    }
+    $('paste').value = link;
+    handle(link, true);
+  });
+
+  // paste
+  $('paste').addEventListener('paste', e => {
+    const cd = e.clipboardData;
+    const hasFile = cd && cd.files && cd.files.length && !(cd.getData('text/plain') || '').trim();
+    if (hasFile) {
+      e.preventDefault();
+      preview('');
+      return show('bad', 'That\'s a copied picture, not its link', 'Right-click the picture and choose Copy Image Address (not Copy Image), then paste again. Or drag the picture onto the box above.', '');
+    }
+    setTimeout(() => handle($('paste').value), 0);
+  });
+  $('check').onclick = () => handle($('paste').value);
+  $('paste').addEventListener('keydown', e => { if (e.key === 'Enter') handle($('paste').value); });
+
+  $('copy').onclick = async () => {
+    const v = $('linkout').value;
+    try { await navigator.clipboard.writeText(v); }
+    catch (e) { $('linkout').select(); document.execCommand('copy'); }
+    $('copy').textContent = 'Copied! Now paste it in the sheet';
+  };
+})();
+</script>
+</body>
+</html>
