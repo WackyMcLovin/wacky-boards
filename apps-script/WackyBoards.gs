@@ -16,6 +16,15 @@ var GOLD = '#ffcc33', BLACK = '#111111', YELLOW = '#fff4c2', GREY = '#eeeeee';
 var API_VERSION = '2026-07';
 var SPOT_TABS = ['AUCTION', '$10', '$30'];
 
+/** Run this after adding SHOP, CLIENT_ID and CLIENT_SECRET. It checks the shop connection and logs the newest orders it can see. */
+function checkShopConnection() {
+  var orders = fetchOrders_();
+  Logger.log('Connected. Orders in the last 36 hours: ' + orders.length);
+  orders.slice(-5).forEach(function (o) {
+    Logger.log(o.name + ' | ' + (o.channelInformation && o.channelInformation.channelDefinition ? o.channelInformation.channelDefinition.channelName : o.sourceName) + ' | ' + o.lineItems.nodes.map(function (l) { return l.title; }).join(', ').slice(0, 80));
+  });
+}
+
 /** Makes clean "Template" copies other streamers can copy (File > Make a copy). Run right after createWackyBoards(). */
 function makeTemplates() {
   var props = PropertiesService.getScriptProperties();
@@ -470,16 +479,14 @@ function fetchOrders_() {
   if (r.getResponseCode() !== 200) throw new Error('Shopify error ' + r.getResponseCode());
   var j = JSON.parse(r.getContentText());
   if (j.errors) {
-    // Customer names need extra permission. Try again without them.
-    if (JSON.stringify(j.errors).indexOf('customer') >= 0) {
-      var q2 = ORDERS_QUERY.replace(' customer { firstName lastName }', '');
-      r = UrlFetchApp.fetch('https://' + t.shop + '/admin/api/' + API_VERSION + '/graphql.json', {
-        method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-        headers: { 'X-Shopify-Access-Token': t.token },
-        payload: JSON.stringify({ query: q2, variables: { q: 'created_at:>' + since } })
-      });
-      j = JSON.parse(r.getContentText());
-    }
+    // Some fields need extra permission (customer names, sales channel). Try again without them.
+    var q2 = ORDERS_QUERY.replace(' customer { firstName lastName }', '').replace(' channelInformation { channelDefinition { channelName } }', '');
+    r = UrlFetchApp.fetch('https://' + t.shop + '/admin/api/' + API_VERSION + '/graphql.json', {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { 'X-Shopify-Access-Token': t.token },
+      payload: JSON.stringify({ query: q2, variables: { q: 'created_at:>' + since } })
+    });
+    j = JSON.parse(r.getContentText());
     if (j.errors) throw new Error(String(j.errors[0] && j.errors[0].message || 'Shopify error').slice(0, 120));
   }
   return (j.data.orders.nodes || []).reverse();   // oldest first, so spots go in buying order
